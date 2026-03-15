@@ -232,7 +232,7 @@ export default async function LandingPage({
               </Button>
             </Link>
             <Link href="/signup?role=marketer">
-              <Button size="xl" variant="outline" className="border-white/30 text-white hover:bg-white/10 w-full sm:w-auto text-[15px]">
+              <Button size="xl" variant="outline" className="border-white/40 text-white hover:bg-white/15 hover:border-white/60 w-full sm:w-auto text-[15px] bg-white/10">
                 {t('ctaMarketer')}
               </Button>
             </Link>
