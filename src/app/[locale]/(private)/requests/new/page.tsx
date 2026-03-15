@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { useRouter } from '@/lib/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { useRouter, usePathname } from '@/lib/navigation'
+import { createRequest } from '@/app/actions/request'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -23,7 +23,6 @@ export default function NewRequestPage({ params: { locale } }: { params: { local
   const t = useTranslations('request')
   const tc = useTranslations('common')
   const router = useRouter()
-  const supabase = createClient()
 
   const [form, setForm] = useState({
     industry: '',
@@ -57,43 +56,28 @@ export default function NewRequestPage({ params: { locale } }: { params: { local
     setSaving(true)
     setError(null)
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { setError(tc('networkError')); setSaving(false); return }
-
-    const { data: userData } = await supabase.from('users').select('region').eq('id', user.id).single()
-    if (!userData) { setError(tc('networkError')); setSaving(false); return }
-
-    const [budgetMin, budgetMax] = form.budget.split('-').map(Number)
-
-    const { data, error: insertError } = await supabase
-      .from('requests')
-      .insert({
-        client_id: user.id,
-        title: form.title.trim(),
+    try {
+      const result = await createRequest({
+        title: form.title,
         industry: form.industry,
-        marketing_type: form.marketing_types.join(', '),
-        budget_min: budgetMin,
-        budget_max: budgetMax === 999 ? null : budgetMax,
-        description: form.description.trim(),
-        region: userData.region,
+        marketing_types: form.marketing_types,
+        budget: form.budget,
+        description: form.description,
+        locale,
       })
-      .select('id')
-      .single()
 
-    if (insertError || !data) {
+      // If we get here, it means the action returned an error
+      // (successful creation redirects and never returns)
+      if (result?.error) {
+        setError(tc('networkError'))
+      }
+    } catch {
+      // redirect() throws a NEXT_REDIRECT error, which is expected on success
+      // Any other error is a real error
       setError(tc('networkError'))
+    } finally {
       setSaving(false)
-      return
     }
-
-    // event_logs: request_created
-    await supabase.from('event_logs').insert({
-      user_id: user.id,
-      event_name: 'request_created',
-      event_data: { request_id: data.id },
-    })
-
-    router.push(`/requests/${data.id}`)
   }
 
   return (
@@ -194,9 +178,20 @@ export default function NewRequestPage({ params: { locale } }: { params: { local
           <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-600">{error}</div>
         )}
 
-        <Button type="submit" size="lg" disabled={!isValid || saving}>
-          {saving ? tc('loading') : t('submitBtn')}
-        </Button>
+        <div className="flex gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            className="flex-1"
+            onClick={() => router.back()}
+          >
+            취소
+          </Button>
+          <Button type="submit" size="lg" className="flex-1" disabled={!isValid || saving}>
+            {saving ? tc('loading') : t('submitBtn')}
+          </Button>
+        </div>
       </form>
     </div>
   )

@@ -69,6 +69,7 @@ export default function ForgotPasswordPage({ params: { locale } }: { params: { l
                 <Input
                   id="email"
                   type="email"
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="hello@example.com"

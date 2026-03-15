@@ -16,6 +16,7 @@ export default async function FeedPage({
 }) {
   setRequestLocale(locale)
   const t = await getTranslations('request')
+  const tf = await getTranslations('feed')
   const supabase = createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -39,7 +40,7 @@ export default async function FeedPage({
   const list = (requests ?? []) as MarketingRequest[]
 
   const TYPE_FILTERS = [
-    { label: '전체', value: '' },
+    { label: tf('all'), value: '' },
     { label: 'SNS', value: 'sns' },
     { label: 'Blog·SEO', value: 'blog' },
     { label: 'Local', value: 'place' },
@@ -48,8 +49,8 @@ export default async function FeedPage({
 
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold text-text-primary mb-2">의뢰 피드</h1>
-      <p className="text-text-secondary text-sm mb-6">내 분야에 맞는 의뢰를 찾아 제안하세요</p>
+      <h1 className="text-2xl font-bold text-text-primary mb-2">{tf('title')}</h1>
+      <p className="text-text-secondary text-sm mb-6">{tf('subtitle')}</p>
 
       {/* Filters */}
       <div className="flex gap-2 flex-wrap mb-6">
@@ -71,8 +72,8 @@ export default async function FeedPage({
       {/* Empty */}
       {list.length === 0 && (
         <div className="text-center py-20 text-text-secondary border-2 border-dashed border-border rounded-xl">
-          <p>현재 등록된 의뢰가 없습니다</p>
-          <p className="text-sm mt-1">나중에 다시 확인해주세요</p>
+          <p>{tf('emptyState')}</p>
+          <p className="text-sm mt-1">{tf('emptyStateHint')}</p>
         </div>
       )}
 
@@ -94,18 +95,18 @@ export default async function FeedPage({
                   {req.budget_min && (
                     <span className="flex items-center gap-1">
                       <Coins size={13} />
-                      {req.budget_min}~{req.budget_max ?? ''}만원
+                      {tf('budgetRange', { min: req.budget_min, max: req.budget_max ?? '' })}
                     </span>
                   )}
                   {req.expires_at && (
                     <span className="flex items-center gap-1">
                       <CalendarDays size={13} />
-                      {new Date(req.expires_at).toLocaleDateString()} 마감
+                      {tf('deadline', { date: new Date(req.expires_at).toLocaleDateString() })}
                     </span>
                   )}
                   <span className="flex items-center gap-1">
                     <Tag size={13} />
-                    제안 {req.proposal_count}건
+                    {tf('proposalCount', { count: req.proposal_count })}
                   </span>
                 </div>
               </CardContent>

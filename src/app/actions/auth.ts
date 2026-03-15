@@ -8,6 +8,30 @@ function isValidPassword(pw: string) {
   return pw.length >= 8 && /[a-zA-Z]/.test(pw) && /[0-9]/.test(pw)
 }
 
+// ─── In-memory rate limiting ───
+const RATE_LIMIT_MAX = 5
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000 // 15 minutes
+
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
+
+function checkRateLimit(email: string): boolean {
+  const now = Date.now()
+  const key = email.toLowerCase().trim()
+  const entry = rateLimitMap.get(key)
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS })
+    return true
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX) {
+    return false
+  }
+
+  entry.count++
+  return true
+}
+
 export async function signUp(data: {
   email: string
   password: string
@@ -16,6 +40,7 @@ export async function signUp(data: {
   region: Region
   locale: string
 }): Promise<{ error: string } | never> {
+  if (!checkRateLimit(data.email)) return { error: 'tooManyAttempts' }
   if (data.name.length < 2) return { error: 'nameTooShort' }
   if (!isValidPassword(data.password)) return { error: 'passwordFormat' }
 
@@ -87,6 +112,8 @@ export async function signIn(data: {
   password: string
   locale: string
 }): Promise<{ error: string } | never> {
+  if (!checkRateLimit(data.email)) return { error: 'tooManyAttempts' }
+
   const supabase = createClient()
 
   const { data: authData, error } = await supabase.auth.signInWithPassword({

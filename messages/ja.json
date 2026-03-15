@@ -19,7 +19,9 @@
     "priceLow": "価格の安い順",
     "ratingHigh": "評価の高い順",
     "networkError": "接続が不安定です。もう一度お試しください",
-    "required": "必須項目です"
+    "required": "必須項目です",
+    "terms": "利用規約",
+    "privacy": "プライバシーポリシー"
   },
   "nav": {
     "home": "ホーム",
@@ -29,7 +31,28 @@
     "profile": "プロフィール",
     "logout": "ログアウト",
     "login": "ログイン",
-    "signup": "会員登録"
+    "signup": "会員登録",
+    "newRequest": "案件を登録"
+  },
+  "dashboard": {
+    "all": "すべて",
+    "newRequest": "案件を登録",
+    "emptyState": "まだ案件を登録していません",
+    "firstRequest": "最初の案件を登録する",
+    "registered": "{date} 登録",
+    "deadline": "{date} 締切",
+    "previous": "前へ",
+    "next": "次へ"
+  },
+  "feed": {
+    "title": "案件一覧",
+    "subtitle": "あなたの専門分野に合った案件を見つけて提案しましょう",
+    "all": "すべて",
+    "emptyState": "現在利用可能な案件はありません",
+    "emptyStateHint": "後でもう一度ご確認ください",
+    "budgetRange": "{min}~{max}万円",
+    "deadline": "{date} 締切",
+    "proposalCount": "提案 {count}件"
   },
   "auth": {
     "roleSelect": "アカウントタイプを選択してください",
@@ -66,7 +89,14 @@
     "resetSuccess": "パスワードが正常に変更されました",
     "newPassword": "新しいパスワード",
     "confirmPassword": "パスワード確認",
-    "resetEmailSent": "パスワードリセットリンクをメールで送信しました"
+    "resetEmailSent": "パスワードリセットリンクをメールで送信しました",
+    "tooManyAttempts": "リクエストが多すぎます。15分後にもう一度お試しください"
+  },
+  "marketers": {
+    "emptyFiltered": "条件に合うマーケターが見つかりません",
+    "tryOtherFilter": "別のフィルターをお試しください",
+    "emptyAll": "まだ登録されたマーケターがいません",
+    "emptyAllDesc": "認定マーケターが近日中に登録される予定です"
   },
   "landing": {
     "heroTitle": "実力派マーケターが直接提案します",

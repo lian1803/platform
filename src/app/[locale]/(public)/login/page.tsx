@@ -54,6 +54,7 @@ export default function LoginPage({ params: { locale } }: { params: { locale: st
               <Input
                 id="email"
                 type="email"
+                autoComplete="email"
                 value={form.email}
                 onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                 placeholder="hello@example.com"
@@ -67,6 +68,7 @@ export default function LoginPage({ params: { locale } }: { params: { locale: st
               <Input
                 id="password"
                 type="password"
+                autoComplete="current-password"
                 value={form.password}
                 onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
                 placeholder="••••••••"

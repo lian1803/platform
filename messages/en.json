@@ -19,7 +19,9 @@
     "priceLow": "Price: Low to High",
     "ratingHigh": "Top Rated",
     "networkError": "Connection unstable. Please try again.",
-    "required": "This field is required"
+    "required": "This field is required",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy"
   },
   "nav": {
     "home": "Home",
@@ -29,7 +31,28 @@
     "profile": "Profile",
     "logout": "Logout",
     "login": "Login",
-    "signup": "Sign Up"
+    "signup": "Sign Up",
+    "newRequest": "New Request"
+  },
+  "dashboard": {
+    "all": "All",
+    "newRequest": "New Request",
+    "emptyState": "You haven't posted any requests yet",
+    "firstRequest": "Post Your First Request",
+    "registered": "Posted {date}",
+    "deadline": "Due {date}",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "feed": {
+    "title": "Job Feed",
+    "subtitle": "Find requests that match your expertise and send proposals",
+    "all": "All",
+    "emptyState": "No requests available right now",
+    "emptyStateHint": "Please check back later",
+    "budgetRange": "${min}~${max}",
+    "deadline": "Due {date}",
+    "proposalCount": "{count} proposals"
   },
   "auth": {
     "roleSelect": "Select your account type",
@@ -66,7 +89,14 @@
     "resetSuccess": "Your password has been successfully changed",
     "newPassword": "New Password",
     "confirmPassword": "Confirm Password",
-    "resetEmailSent": "A password reset link has been sent to your email"
+    "resetEmailSent": "A password reset link has been sent to your email",
+    "tooManyAttempts": "Too many attempts. Please try again in 15 minutes."
+  },
+  "marketers": {
+    "emptyFiltered": "No marketers match your criteria",
+    "tryOtherFilter": "Try selecting a different filter",
+    "emptyAll": "No marketers registered yet",
+    "emptyAllDesc": "Verified marketers will be joining soon"
   },
   "landing": {
     "heroTitle": "Verified Marketers Pitch to You",

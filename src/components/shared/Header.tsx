@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Link } from '@/lib/navigation'
 import { Button } from '@/components/ui/button'
 import MobileMenu from '@/components/shared/MobileMenu'
+import LanguageSwitcher from '@/components/shared/LanguageSwitcher'
 
 export default async function Header({ locale }: { locale: string }) {
   const t = await getTranslations('nav')
@@ -10,6 +11,7 @@ export default async function Header({ locale }: { locale: string }) {
   const { data: { user } } = await supabase.auth.getUser()
 
   let userRole: string | null = null
+  let pendingProposalCount = 0
   if (user) {
     const { data } = await supabase
       .from('users')
@@ -17,6 +19,24 @@ export default async function Header({ locale }: { locale: string }) {
       .eq('id', user.id)
       .single()
     userRole = data?.role ?? null
+
+    // For client users, count pending proposals on their requests
+    if (userRole === 'client') {
+      const { data: requests } = await supabase
+        .from('requests')
+        .select('id')
+        .eq('client_id', user.id)
+
+      if (requests && requests.length > 0) {
+        const requestIds = requests.map((r: { id: string }) => r.id)
+        const { count } = await supabase
+          .from('proposals')
+          .select('id', { count: 'exact', head: true })
+          .in('request_id', requestIds)
+          .eq('status', 'pending')
+        pendingProposalCount = count ?? 0
+      }
+    }
   }
 
   return (
@@ -36,8 +56,13 @@ export default async function Header({ locale }: { locale: string }) {
             {t('marketers')}
           </Link>
           {user && userRole === 'client' && (
-            <Link href="/dashboard" className="px-4 py-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-background/80 transition-all duration-200 text-sm font-medium">
+            <Link href="/dashboard" className="relative px-4 py-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-background/80 transition-all duration-200 text-sm font-medium">
               {t('dashboard')}
+              {pendingProposalCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold px-1 leading-none">
+                  {pendingProposalCount > 99 ? '99+' : pendingProposalCount}
+                </span>
+              )}
             </Link>
           )}
           {user && userRole === 'marketer' && (
@@ -49,6 +74,7 @@ export default async function Header({ locale }: { locale: string }) {
 
         {/* Auth Buttons - Desktop */}
         <div className="hidden md:flex items-center gap-2">
+          <LanguageSwitcher />
           {user ? (
             <form action={`/${locale}/auth/logout`} method="POST">
               <Button variant="ghost" size="sm" type="submit">{t('logout')}</Button>

@@ -5,7 +5,7 @@ import { Link } from '@/lib/navigation'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { PlusCircle, MessageSquare, Inbox } from 'lucide-react'
+import { PlusCircle, MessageSquare, Inbox, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { MarketingRequest } from '@/lib/types/database'
 
 const STATUS_VARIANT: Record<string, 'default' | 'success' | 'warning' | 'outline'> = {
@@ -15,15 +15,18 @@ const STATUS_VARIANT: Record<string, 'default' | 'success' | 'warning' | 'outlin
   closed: 'outline',
 }
 
+const PAGE_SIZE = 10
+
 export default async function DashboardPage({
   params: { locale },
   searchParams,
 }: {
   params: { locale: string }
-  searchParams: { status?: string }
+  searchParams: { status?: string; page?: string }
 }) {
   setRequestLocale(locale)
   const t = await getTranslations('request')
+  const td = await getTranslations('dashboard')
   const supabase = createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -34,9 +37,13 @@ export default async function DashboardPage({
   // 마케터는 피드로 리다이렉트
   if (userData?.role === 'marketer') redirect(`/${locale}/feed`)
 
+  const currentPage = Math.max(1, parseInt(searchParams.page ?? '1', 10) || 1)
+  const from = (currentPage - 1) * PAGE_SIZE
+  const to = from + PAGE_SIZE - 1
+
   let query = supabase
     .from('requests')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('client_id', user.id)
     .order('created_at', { ascending: false })
 
@@ -44,10 +51,24 @@ export default async function DashboardPage({
     query = query.eq('status', searchParams.status)
   }
 
-  const { data: requests } = await query
-  const list = (requests ?? []) as MarketingRequest[]
+  query = query.range(from, to)
 
-  const STATUS_TABS = ['전체', 'open', 'in_progress', 'completed', 'closed']
+  const { data: requests, count } = await query
+  const list = (requests ?? []) as MarketingRequest[]
+  const totalCount = count ?? 0
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
+
+  const STATUS_TABS = ['all', 'open', 'in_progress', 'completed', 'closed']
+
+  function buildUrl(params: { status?: string; page?: number }) {
+    const sp = new URLSearchParams()
+    const status = params.status ?? searchParams.status
+    const page = params.page ?? currentPage
+    if (status) sp.set('status', status)
+    if (page > 1) sp.set('page', String(page))
+    const qs = sp.toString()
+    return `/dashboard${qs ? `?${qs}` : ''}`
+  }
 
   return (
     <div className="max-w-3xl mx-auto p-4 sm:p-6 md:p-8">
@@ -55,7 +76,7 @@ export default async function DashboardPage({
         <h1 className="text-2xl md:text-3xl font-bold text-text-primary tracking-tight">{t('myRequests')}</h1>
         <Link href="/requests/new">
           <Button size="sm" className="gap-2">
-            <PlusCircle size={16} /> 의뢰 등록
+            <PlusCircle size={16} /> {td('newRequest')}
           </Button>
         </Link>
       </div>
@@ -65,14 +86,14 @@ export default async function DashboardPage({
         {STATUS_TABS.map((s) => (
           <Link
             key={s}
-            href={s === '전체' ? '/dashboard' : `/dashboard?status=${s}`}
+            href={s === 'all' ? '/dashboard' : buildUrl({ status: s, page: 1 })}
             className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-200 ${
-              (s === '전체' && !searchParams.status) || searchParams.status === s
+              (s === 'all' && !searchParams.status) || searchParams.status === s
                 ? 'border-primary bg-primary text-white shadow-sm'
                 : 'border-border/60 bg-surface text-text-secondary hover:border-primary/40 hover:text-primary'
             }`}
           >
-            {s === '전체' ? '전체' : t(`status.${s}` as Parameters<typeof t>[0])}
+            {s === 'all' ? td('all') : t(`status.${s}` as Parameters<typeof t>[0])}
           </Link>
         ))}
       </div>
@@ -83,9 +104,9 @@ export default async function DashboardPage({
           <div className="w-16 h-16 rounded-2xl bg-background flex items-center justify-center mx-auto mb-4">
             <Inbox size={28} className="text-text-secondary" />
           </div>
-          <p className="text-text-secondary font-medium">아직 등록한 의뢰가 없어요</p>
+          <p className="text-text-secondary font-medium">{td('emptyState')}</p>
           <Link href="/requests/new" className="mt-4 inline-block">
-            <Button className="mt-2 gap-2"><PlusCircle size={16} /> 첫 의뢰 등록하기</Button>
+            <Button className="mt-2 gap-2"><PlusCircle size={16} /> {td('firstRequest')}</Button>
           </Link>
         </div>
       )}
@@ -113,14 +134,45 @@ export default async function DashboardPage({
                   </div>
                 </div>
                 <p className="text-xs text-text-secondary mt-3 pt-3 border-t border-border/40">
-                  {new Date(req.created_at).toLocaleDateString()} 등록
-                  {req.expires_at && ` · ${new Date(req.expires_at).toLocaleDateString()} 마감`}
+                  {td('registered', { date: new Date(req.created_at).toLocaleDateString() })}
+                  {req.expires_at && ` · ${td('deadline', { date: new Date(req.expires_at).toLocaleDateString() })}`}
                 </p>
               </CardContent>
             </Card>
           </Link>
         ))}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-8">
+          {currentPage > 1 ? (
+            <Link href={buildUrl({ page: currentPage - 1 })}>
+              <Button variant="outline" size="sm" className="gap-1">
+                <ChevronLeft size={16} /> {td('previous')}
+              </Button>
+            </Link>
+          ) : (
+            <Button variant="outline" size="sm" className="gap-1" disabled>
+              <ChevronLeft size={16} /> {td('previous')}
+            </Button>
+          )}
+          <span className="text-sm text-text-secondary px-3">
+            {currentPage} / {totalPages}
+          </span>
+          {currentPage < totalPages ? (
+            <Link href={buildUrl({ page: currentPage + 1 })}>
+              <Button variant="outline" size="sm" className="gap-1">
+                {td('next')} <ChevronRight size={16} />
+              </Button>
+            </Link>
+          ) : (
+            <Button variant="outline" size="sm" className="gap-1" disabled>
+              {td('next')} <ChevronRight size={16} />
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   )
 }

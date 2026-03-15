@@ -76,6 +76,7 @@ export default function ResetPasswordPage({ params: { locale } }: { params: { lo
                 <Input
                   id="password"
                   type="password"
+                  autoComplete="new-password"
                   value={form.password}
                   onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
                   placeholder="••••••••"
@@ -89,6 +90,7 @@ export default function ResetPasswordPage({ params: { locale } }: { params: { lo
                 <Input
                   id="confirmPassword"
                   type="password"
+                  autoComplete="new-password"
                   value={form.confirmPassword}
                   onChange={(e) => setForm((f) => ({ ...f, confirmPassword: e.target.value }))}
                   placeholder="••••••••"

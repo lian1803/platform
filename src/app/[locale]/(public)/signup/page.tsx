@@ -170,6 +170,7 @@ export default function SignupPage({ params: { locale } }: { params: { locale: s
                 <Label htmlFor="name" className="text-sm font-medium text-text-primary">{t('name')}</Label>
                 <Input
                   id="name"
+                  autoComplete="name"
                   value={form.name}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                   placeholder="홍길동"
@@ -183,6 +184,7 @@ export default function SignupPage({ params: { locale } }: { params: { locale: s
                 <Input
                   id="email"
                   type="email"
+                  autoComplete="email"
                   value={form.email}
                   onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                   placeholder="hello@example.com"
@@ -195,6 +197,7 @@ export default function SignupPage({ params: { locale } }: { params: { locale: s
                 <Input
                   id="password"
                   type="password"
+                  autoComplete="new-password"
                   value={form.password}
                   onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
                   placeholder="영문+숫자 8자 이상"
@@ -216,6 +219,13 @@ export default function SignupPage({ params: { locale } }: { params: { locale: s
                   {loading ? tc('loading') : t('signupBtn')}
                 </Button>
               </div>
+
+              <p className="text-xs text-text-secondary text-center mt-2">
+                {t('signupBtn')}{' '}
+                <Link href="/terms" className="text-primary hover:underline">{tc('terms')}</Link>
+                {' & '}
+                <Link href="/privacy" className="text-primary hover:underline">{tc('privacy')}</Link>
+              </p>
             </form>
           )}
         </div>

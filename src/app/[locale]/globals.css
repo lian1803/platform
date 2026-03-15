@@ -53,4 +53,12 @@
   .delay-300 { animation-delay: 300ms; }
   .delay-400 { animation-delay: 400ms; }
   .delay-500 { animation-delay: 500ms; }
+
+  /* Animation fill-mode forwards for elements starting with opacity-0 */
+  .animate-fade-in-up,
+  .animate-fade-in,
+  .animate-scale-in,
+  .animate-count-up {
+    animation-fill-mode: forwards;
+  }
 }

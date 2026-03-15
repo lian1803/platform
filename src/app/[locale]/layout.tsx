@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { locales, type Locale } from '@/i18n'
+import { Toaster } from 'sonner'
 import './globals.css'
 
 const notoSansKR = Noto_Sans_KR({
@@ -72,6 +73,7 @@ export default async function LocaleLayout({
     <NextIntlClientProvider messages={messages}>
       <div lang={locale} className={`${fontVariable} bg-background text-text-primary font-sans antialiased min-h-screen`}>
         {children}
+        <Toaster richColors position="top-right" />
       </div>
     </NextIntlClientProvider>
   )

@@ -16,14 +16,13 @@ export default function Sidebar({ role }: SidebarProps) {
 
   const clientItems = [
     { href: '/dashboard', label: t('dashboard'), icon: LayoutDashboard },
-    { href: '/requests/new', label: '의뢰 등록', icon: PlusCircle },
+    { href: '/requests/new', label: t('newRequest'), icon: PlusCircle },
     { href: '/marketers', label: t('marketers'), icon: Users },
     { href: '/profile/edit', label: t('profile'), icon: User },
   ]
 
   const marketerItems = [
     { href: '/feed', label: t('feed'), icon: Rss },
-    { href: '/dashboard', label: t('dashboard'), icon: LayoutDashboard },
     { href: '/marketers', label: t('marketers'), icon: Users },
     { href: '/profile/edit', label: t('profile'), icon: User },
   ]

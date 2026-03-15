@@ -73,20 +73,20 @@ export default async function LandingPage({
 
         <div className="relative max-w-3xl mx-auto flex flex-col items-center gap-6 text-center">
           {/* Trust badge */}
-          <div className="animate-fade-in-up opacity-0 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 border border-primary-100 text-primary text-sm font-medium">
+          <div className="animate-fade-in-up inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 border border-primary-100 text-primary text-sm font-medium">
             <Sparkles size={14} />
             <span>{locale === 'ko' ? '검증된 마케터와 함께' : 'With Verified Marketers'}</span>
           </div>
 
-          <h1 className="animate-fade-in-up opacity-0 delay-100 text-[clamp(2rem,6vw,3.25rem)] font-bold text-text-primary leading-[1.15] tracking-tight">
+          <h1 className="animate-fade-in-up delay-100 text-[clamp(2rem,6vw,3.25rem)] font-bold text-text-primary leading-[1.15] tracking-tight">
             {t('heroTitle')}
           </h1>
 
-          <p className="animate-fade-in-up opacity-0 delay-200 text-text-secondary text-lg md:text-xl leading-relaxed max-w-xl">
+          <p className="animate-fade-in-up delay-200 text-text-secondary text-lg md:text-xl leading-relaxed max-w-xl">
             {t('heroSubtitle')}
           </p>
 
-          <div className="animate-fade-in-up opacity-0 delay-300 flex flex-col sm:flex-row gap-3 mt-4">
+          <div className="animate-fade-in-up delay-300 flex flex-col sm:flex-row gap-3 mt-4">
             <Link href="/signup?role=client">
               <Button size="xl" className="w-full sm:w-auto gap-2 text-[15px]">
                 {t('ctaClient')} <ArrowRight size={18} />
@@ -105,15 +105,15 @@ export default async function LandingPage({
       <section className="relative -mt-8 px-4 sm:px-6 z-10">
         <div className="max-w-3xl mx-auto">
           <div className="bg-surface rounded-2xl shadow-elevated border border-border/40 grid grid-cols-3 divide-x divide-border/50">
-            <div className="px-4 sm:px-8 py-6 sm:py-8 text-center animate-count-up opacity-0">
+            <div className="px-4 sm:px-8 py-6 sm:py-8 text-center animate-count-up">
               <p className="text-2xl sm:text-4xl font-bold text-primary tracking-tight">{stats.marketerCount}+</p>
               <p className="text-xs sm:text-sm text-text-secondary mt-1.5 font-medium">{t('statsMarketers')}</p>
             </div>
-            <div className="px-4 sm:px-8 py-6 sm:py-8 text-center animate-count-up opacity-0 delay-100">
+            <div className="px-4 sm:px-8 py-6 sm:py-8 text-center animate-count-up delay-100">
               <p className="text-2xl sm:text-4xl font-bold text-primary tracking-tight">{stats.matchCount}+</p>
               <p className="text-xs sm:text-sm text-text-secondary mt-1.5 font-medium">{t('statsMatches')}</p>
             </div>
-            <div className="px-4 sm:px-8 py-6 sm:py-8 text-center animate-count-up opacity-0 delay-200">
+            <div className="px-4 sm:px-8 py-6 sm:py-8 text-center animate-count-up delay-200">
               <div className="flex items-center justify-center gap-1.5">
                 <Star size={20} className="fill-warning text-warning" />
                 <p className="text-2xl sm:text-4xl font-bold text-primary tracking-tight">{stats.avgRating}</p>
@@ -139,7 +139,7 @@ export default async function LandingPage({
               { step: '02', title: t('how2Title'), desc: t('how2Desc'), icon: Shield, delay: 'delay-100' },
               { step: '03', title: t('how3Title'), desc: t('how3Desc'), icon: Zap, delay: 'delay-200' },
             ].map(({ step, title, desc, icon: Icon, delay }) => (
-              <div key={step} className={`animate-fade-in-up opacity-0 ${delay} flex flex-col items-center text-center gap-5 p-6 rounded-2xl hover:bg-surface hover:shadow-card transition-all duration-300`}>
+              <div key={step} className={`animate-fade-in-up ${delay} flex flex-col items-center text-center gap-5 p-6 rounded-2xl hover:bg-surface hover:shadow-card transition-all duration-300`}>
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center">
                   <Icon size={28} className="text-primary" />
                 </div>
@@ -172,7 +172,7 @@ export default async function LandingPage({
             <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
               {featuredMarketers.map((m, idx) => (
                 <Link key={m.id} href={`/marketers/${m.id}`}>
-                  <Card className={`hover:shadow-card-hover hover:-translate-y-1 cursor-pointer h-full animate-fade-in-up opacity-0 ${idx === 0 ? '' : idx === 1 ? 'delay-100' : idx === 2 ? 'delay-200' : 'delay-300'}`}>
+                  <Card className={`hover:shadow-card-hover hover:-translate-y-1 cursor-pointer h-full animate-fade-in-up ${idx === 0 ? '' : idx === 1 ? 'delay-100' : idx === 2 ? 'delay-200' : 'delay-300'}`}>
                     <CardContent className="p-5 flex flex-col gap-3.5">
                       {/* Avatar */}
                       <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-primary font-bold text-lg">
@@ -243,10 +243,12 @@ export default async function LandingPage({
       {/* ─── Footer ─── */}
       <footer className="py-8 px-4 sm:px-6 bg-surface border-t border-border/40">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-text-secondary">
-          <p className="font-medium">&copy; 2024 Platform. All rights reserved.</p>
+          <p className="font-medium">&copy; {new Date().getFullYear()} Platform. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <Link href="/marketers" className="hover:text-text-primary transition-colors">{locale === 'ko' ? '마케터 찾기' : 'Find Marketers'}</Link>
             <Link href="/login" className="hover:text-text-primary transition-colors">{locale === 'ko' ? '로그인' : 'Log in'}</Link>
+            <Link href="/terms" className="hover:text-text-primary transition-colors">{tc('terms')}</Link>
+            <Link href="/privacy" className="hover:text-text-primary transition-colors">{tc('privacy')}</Link>
           </div>
         </div>
       </footer>

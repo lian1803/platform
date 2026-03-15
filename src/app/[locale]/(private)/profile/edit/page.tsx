@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Camera } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Specialty } from '@/lib/types/database'
 
@@ -18,16 +19,24 @@ const SPECIALTIES: { value: Specialty; key: string }[] = [
   { value: 'ads', key: 'specialtyAds' },
 ]
 
+const MAX_AVATAR_SIZE = 2 * 1024 * 1024 // 2MB
+const ACCEPTED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp']
+
 export default function ProfileEditPage() {
   const t = useTranslations('marketer')
   const tc = useTranslations('common')
   const supabase = createClient()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
 
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [userName, setUserName] = useState<string>('')
+  const [userId, setUserId] = useState<string | null>(null)
   const [specialties, setSpecialties] = useState<Specialty[]>([])
   const [form, setForm] = useState({
     experience_years: '',
@@ -41,25 +50,92 @@ export default function ProfileEditPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
-      const { data } = await supabase
-        .from('marketer_profiles')
-        .select('specialties, experience_years, bio, price_range_min, price_range_max')
-        .eq('user_id', user.id)
-        .single()
+      setUserId(user.id)
 
-      if (data) {
-        setSpecialties(data.specialties ?? [])
+      const [{ data: profileData }, { data: userData }] = await Promise.all([
+        supabase
+          .from('marketer_profiles')
+          .select('specialties, experience_years, bio, price_range_min, price_range_max')
+          .eq('user_id', user.id)
+          .single(),
+        supabase
+          .from('users')
+          .select('name, avatar_url')
+          .eq('id', user.id)
+          .single(),
+      ])
+
+      if (userData) {
+        setUserName(userData.name ?? '')
+        setAvatarUrl(userData.avatar_url ?? null)
+      }
+
+      if (profileData) {
+        setSpecialties(profileData.specialties ?? [])
         setForm({
-          experience_years: data.experience_years?.toString() ?? '',
-          bio: data.bio ?? '',
-          price_range_min: data.price_range_min?.toString() ?? '',
-          price_range_max: data.price_range_max?.toString() ?? '',
+          experience_years: profileData.experience_years?.toString() ?? '',
+          bio: profileData.bio ?? '',
+          price_range_min: profileData.price_range_min?.toString() ?? '',
+          price_range_max: profileData.price_range_max?.toString() ?? '',
         })
       }
       setLoading(false)
     }
     load()
   }, [])
+
+  async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file || !userId) return
+
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+      setError('PNG, JPG, WebP 형식만 지원합니다')
+      return
+    }
+    if (file.size > MAX_AVATAR_SIZE) {
+      setError('이미지는 2MB 이하만 가능합니다')
+      return
+    }
+
+    setUploadingAvatar(true)
+    setError(null)
+
+    const fileExt = file.name.split('.').pop()
+    const filePath = `${userId}/avatar.${fileExt}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, file, { upsert: true })
+
+    if (uploadError) {
+      setError(tc('networkError'))
+      setUploadingAvatar(false)
+      return
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(filePath)
+
+    const newUrl = `${publicUrlData.publicUrl}?t=${Date.now()}`
+
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({ avatar_url: newUrl })
+      .eq('id', userId)
+
+    if (updateError) {
+      setError(tc('networkError'))
+    } else {
+      setAvatarUrl(newUrl)
+    }
+    setUploadingAvatar(false)
+
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
 
   function toggleSpecialty(s: Specialty) {
     setSpecialties((prev) =>
@@ -121,6 +197,44 @@ export default function ProfileEditPage() {
       <h1 className="text-2xl font-bold text-text-primary mb-6">{t('profileEdit')}</h1>
 
       <form onSubmit={handleSave} className="flex flex-col gap-5">
+        {/* 프로필 사진 */}
+        <div className="flex flex-col items-center gap-3 mb-2">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploadingAvatar}
+            className="relative group"
+          >
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt={userName}
+                className="w-20 h-20 rounded-full object-cover border-2 border-border"
+              />
+            ) : (
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-primary font-bold text-2xl border-2 border-border">
+                {userName?.[0]?.toUpperCase() ?? 'M'}
+              </div>
+            )}
+            <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Camera size={20} className="text-white" />
+            </div>
+            {uploadingAvatar && (
+              <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center">
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            className="hidden"
+            onChange={handleAvatarUpload}
+          />
+          <p className="text-xs text-text-secondary">PNG, JPG, WebP / 2MB</p>
+        </div>
+
         {/* 전문 분야 */}
         <div className="flex flex-col gap-2">
           <Label>{t('specialties')}</Label>

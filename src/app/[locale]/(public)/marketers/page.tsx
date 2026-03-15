@@ -15,11 +15,19 @@ import { createClient } from '@/lib/supabase/server'
 import { Link } from '@/lib/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Star, Search } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Star, Search, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { MarketerProfileWithUser, Specialty } from '@/lib/types/database'
 
 const specialtyLabel: Record<Specialty, string> = {
   sns: 'SNS', blog: 'Blog/SEO', place: 'Local', ads: 'Ads',
+}
+
+const PAGE_SIZE = 12
+
+function escapeLike(str: string): string {
+  return str.replace(/[%_\\]/g, (ch) => '\\' + ch)
 }
 
 export default async function MarketersPage({
@@ -27,23 +35,38 @@ export default async function MarketersPage({
   searchParams,
 }: {
   params: { locale: string }
-  searchParams: { specialty?: string }
+  searchParams: { specialty?: string; page?: string; q?: string }
 }) {
   setRequestLocale(locale)
   const t = await getTranslations('marketer')
+  const tm = await getTranslations('marketers')
   const supabase = createClient()
+
+  const currentPage = Math.max(1, parseInt(searchParams.page ?? '1', 10) || 1)
+  const from = (currentPage - 1) * PAGE_SIZE
+  const to = from + PAGE_SIZE - 1
+  const searchQuery = (searchParams.q ?? '').trim()
 
   let query = supabase
     .from('marketer_profiles')
-    .select('*, users(name, avatar_url)')
+    .select('*, users(name, avatar_url)', { count: 'exact' })
     .order('rating_avg', { ascending: false })
 
   if (searchParams.specialty) {
     query = query.contains('specialties', [searchParams.specialty])
   }
 
-  const { data: marketers } = await query
+  if (searchQuery) {
+    const escaped = escapeLike(searchQuery)
+    query = query.or(`bio.ilike.%${escaped}%,users.name.ilike.%${escaped}%`)
+  }
+
+  query = query.range(from, to)
+
+  const { data: marketers, count } = await query
   const list = (marketers ?? []) as MarketerProfileWithUser[]
+  const totalCount = count ?? 0
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
 
   const SPECIALTY_FILTERS: { value: string; label: string }[] = [
     { value: '', label: '전체' },
@@ -53,6 +76,18 @@ export default async function MarketersPage({
     { value: 'ads', label: 'Ads' },
   ]
 
+  function buildUrl(params: { specialty?: string; page?: number; q?: string }) {
+    const sp = new URLSearchParams()
+    const spec = params.specialty ?? searchParams.specialty
+    const q = params.q ?? searchQuery
+    const page = params.page ?? currentPage
+    if (spec) sp.set('specialty', spec)
+    if (q) sp.set('q', q)
+    if (page > 1) sp.set('page', String(page))
+    const qs = sp.toString()
+    return `/marketers${qs ? `?${qs}` : ''}`
+  }
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 md:py-12">
       {/* Page header */}
@@ -61,21 +96,39 @@ export default async function MarketersPage({
         <p className="text-text-secondary mt-2 text-sm">검증된 전문 마케터를 찾아보세요</p>
       </div>
 
-      {/* Filters */}
-      <div className="flex gap-2 flex-wrap mb-8">
-        {SPECIALTY_FILTERS.map(({ value, label }) => (
-          <Link
-            key={value}
-            href={value ? `/marketers?specialty=${value}` : '/marketers'}
-            className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-200 ${
-              searchParams.specialty === value || (!searchParams.specialty && !value)
-                ? 'border-primary bg-primary text-white shadow-sm'
-                : 'border-border/60 bg-surface text-text-secondary hover:border-primary/40 hover:text-primary'
-            }`}
-          >
-            {label}
-          </Link>
-        ))}
+      {/* Search + Filters */}
+      <div className="flex flex-col gap-4 mb-8">
+        <form method="GET" className="flex gap-2">
+          {searchParams.specialty && (
+            <input type="hidden" name="specialty" value={searchParams.specialty} />
+          )}
+          <Input
+            name="q"
+            placeholder="마케터 이름 또는 소개글 검색..."
+            defaultValue={searchQuery}
+            className="max-w-sm"
+          />
+          <Button type="submit" variant="outline" size="default" className="gap-2">
+            <Search size={16} />
+            검색
+          </Button>
+        </form>
+
+        <div className="flex gap-2 flex-wrap">
+          {SPECIALTY_FILTERS.map(({ value, label }) => (
+            <Link
+              key={value}
+              href={buildUrl({ specialty: value, page: 1 })}
+              className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-200 ${
+                searchParams.specialty === value || (!searchParams.specialty && !value)
+                  ? 'border-primary bg-primary text-white shadow-sm'
+                  : 'border-border/60 bg-surface text-text-secondary hover:border-primary/40 hover:text-primary'
+              }`}
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
       </div>
 
       {/* Empty */}
@@ -84,8 +137,17 @@ export default async function MarketersPage({
           <div className="w-16 h-16 rounded-2xl bg-background flex items-center justify-center mx-auto mb-4">
             <Search size={28} className="text-text-secondary" />
           </div>
-          <p className="text-lg font-medium text-text-primary">등록된 마케터가 없습니다</p>
-          <p className="text-sm mt-1.5">다른 필터를 선택해보세요</p>
+          {searchParams.specialty || searchQuery ? (
+            <>
+              <p className="text-lg font-medium text-text-primary">{tm('emptyFiltered')}</p>
+              <p className="text-sm mt-1.5">{tm('tryOtherFilter')}</p>
+            </>
+          ) : (
+            <>
+              <p className="text-lg font-medium text-text-primary">{tm('emptyAll')}</p>
+              <p className="text-sm mt-1.5">{tm('emptyAllDesc')}</p>
+            </>
+          )}
         </div>
       )}
 
@@ -125,6 +187,37 @@ export default async function MarketersPage({
           </Link>
         ))}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-10">
+          {currentPage > 1 ? (
+            <Link href={buildUrl({ page: currentPage - 1 })}>
+              <Button variant="outline" size="sm" className="gap-1">
+                <ChevronLeft size={16} /> 이전
+              </Button>
+            </Link>
+          ) : (
+            <Button variant="outline" size="sm" className="gap-1" disabled>
+              <ChevronLeft size={16} /> 이전
+            </Button>
+          )}
+          <span className="text-sm text-text-secondary px-3">
+            {currentPage} / {totalPages}
+          </span>
+          {currentPage < totalPages ? (
+            <Link href={buildUrl({ page: currentPage + 1 })}>
+              <Button variant="outline" size="sm" className="gap-1">
+                다음 <ChevronRight size={16} />
+              </Button>
+            </Link>
+          ) : (
+            <Button variant="outline" size="sm" className="gap-1" disabled>
+              다음 <ChevronRight size={16} />
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   )
 }

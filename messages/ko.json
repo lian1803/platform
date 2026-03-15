@@ -19,7 +19,9 @@
     "priceLow": "가격 낮은순",
     "ratingHigh": "평점 높은순",
     "networkError": "연결이 불안정합니다. 다시 시도해주세요",
-    "required": "필수 항목입니다"
+    "required": "필수 항목입니다",
+    "terms": "이용약관",
+    "privacy": "개인정보처리방침"
   },
   "nav": {
     "home": "홈",
@@ -29,7 +31,28 @@
     "profile": "프로필",
     "logout": "로그아웃",
     "login": "로그인",
-    "signup": "회원가입"
+    "signup": "회원가입",
+    "newRequest": "의뢰 등록"
+  },
+  "dashboard": {
+    "all": "전체",
+    "newRequest": "의뢰 등록",
+    "emptyState": "아직 등록한 의뢰가 없어요",
+    "firstRequest": "첫 의뢰 등록하기",
+    "registered": "{date} 등록",
+    "deadline": "{date} 마감",
+    "previous": "이전",
+    "next": "다음"
+  },
+  "feed": {
+    "title": "의뢰 피드",
+    "subtitle": "내 분야에 맞는 의뢰를 찾아 제안하세요",
+    "all": "전체",
+    "emptyState": "현재 등록된 의뢰가 없습니다",
+    "emptyStateHint": "나중에 다시 확인해주세요",
+    "budgetRange": "{min}~{max}만원",
+    "deadline": "{date} 마감",
+    "proposalCount": "제안 {count}건"
   },
   "auth": {
     "roleSelect": "회원 유형을 선택해주세요",
@@ -66,7 +89,14 @@
     "resetSuccess": "비밀번호가 성공적으로 변경되었습니다",
     "newPassword": "새 비밀번호",
     "confirmPassword": "비밀번호 확인",
-    "resetEmailSent": "비밀번호 재설정 링크를 이메일로 보내드렸습니다"
+    "resetEmailSent": "비밀번호 재설정 링크를 이메일로 보내드렸습니다",
+    "tooManyAttempts": "요청이 너무 많습니다. 15분 후에 다시 시도해주세요"
+  },
+  "marketers": {
+    "emptyFiltered": "조건에 맞는 마케터가 없습니다",
+    "tryOtherFilter": "다른 필터를 선택해보세요",
+    "emptyAll": "아직 등록된 마케터가 없습니다",
+    "emptyAllDesc": "곧 검증된 마케터들이 등록될 예정입니다"
   },
   "landing": {
     "heroTitle": "검증된 마케터가 먼저 제안합니다",
