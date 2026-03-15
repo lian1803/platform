@@ -1,6 +1,33 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
+
+export async function generateMetadata({
+  params: { id },
+}: {
+  params: { id: string }
+}): Promise<Metadata> {
+  const supabase = createClient()
+  const { data: mp } = await supabase
+    .from('marketer_profiles')
+    .select('*, users(name)')
+    .eq('id', id)
+    .single()
+
+  const name = mp?.users?.name ?? '마케터'
+
+  return {
+    title: `${name} - 마케터 프로필`,
+    description: `${name}의 마케팅 포트폴리오와 후기를 확인하세요. Platform에서 검증된 마케터를 만나보세요.`,
+    openGraph: {
+      title: `${name} - 마케터 프로필 | Platform`,
+      description: `${name}의 마케팅 포트폴리오와 후기를 확인하세요.`,
+      type: 'profile',
+      url: `https://platform-mocha-chi.vercel.app/ko/marketers/${id}`,
+    },
+  }
+}
 import { Link } from '@/lib/navigation'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import { Link } from '@/lib/navigation'
@@ -30,6 +31,17 @@ async function getFeaturedMarketers() {
     .gt('review_count', 0)
     .limit(4)
   return (data ?? []) as MarketerProfileWithUser[]
+}
+
+export const metadata: Metadata = {
+  title: 'Platform — 검증된 마케터 매칭',
+  description: '검증된 마케터와 연결하여 비즈니스를 성장시키세요. SNS, 블로그, 광고 등 다양한 마케팅 전문가를 만나보세요.',
+  openGraph: {
+    title: 'Platform — 검증된 마케터 매칭',
+    description: '검증된 마케터와 연결하여 비즈니스를 성장시키세요.',
+    type: 'website',
+    url: 'https://platform-mocha-chi.vercel.app',
+  },
 }
 
 const specialtyLabel: Record<string, string> = {

@@ -1,6 +1,17 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+
+export const metadata: Metadata = {
+  title: '의뢰 상세',
+  description: '마케팅 의뢰 상세 정보와 받은 제안을 확인하세요.',
+  openGraph: {
+    title: '의뢰 상세 | Platform',
+    description: '마케팅 의뢰 상세 정보와 받은 제안을 확인하세요.',
+    type: 'website',
+  },
+}
 import { Link } from '@/lib/navigation'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'

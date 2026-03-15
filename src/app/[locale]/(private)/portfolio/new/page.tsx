@@ -146,7 +146,7 @@ export default function NewPortfolioPage({ params: { locale } }: { params: { loc
               {previews.map((url, i) => (
                 <div key={i} className="relative">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={url} alt="" className="w-20 h-20 object-cover rounded-lg" />
+                  <img src={url} alt={`포트폴리오 이미지 ${i + 1}`} className="w-20 h-20 object-cover rounded-lg" />
                   <button
                     type="button"
                     onClick={() => removeImage(i)}

@@ -1,4 +1,16 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+
+export const metadata: Metadata = {
+  title: '마케터 둘러보기',
+  description: '검증된 마케팅 전문가를 분야별로 둘러보고 비교해보세요. SNS, 블로그, 지역 마케팅, 광고 전문가를 만나보세요.',
+  openGraph: {
+    title: '마케터 둘러보기 | Platform',
+    description: '검증된 마케팅 전문가를 분야별로 둘러보고 비교해보세요.',
+    type: 'website',
+    url: 'https://platform-mocha-chi.vercel.app/ko/marketers',
+  },
+}
 import { createClient } from '@/lib/supabase/server'
 import { Link } from '@/lib/navigation'
 import { Card, CardContent } from '@/components/ui/card'

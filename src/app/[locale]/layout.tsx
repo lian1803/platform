@@ -38,8 +38,20 @@ const fontByLocale: Record<Locale, string> = {
 }
 
 export const metadata: Metadata = {
-  title: 'Platform — Verified Marketers',
-  description: 'Connect with verified marketers for your business',
+  title: {
+    default: 'Platform — 검증된 마케터 매칭',
+    template: '%s | Platform',
+  },
+  description: '검증된 마케터와 연결하여 비즈니스를 성장시키세요. SNS, 블로그, 광고 등 다양한 마케팅 전문가를 만나보세요.',
+  metadataBase: new URL('https://platform-mocha-chi.vercel.app'),
+  openGraph: {
+    type: 'website',
+    siteName: 'Platform',
+    locale: 'ko_KR',
+    url: 'https://platform-mocha-chi.vercel.app',
+    title: 'Platform — 검증된 마케터 매칭',
+    description: '검증된 마케터와 연결하여 비즈니스를 성장시키세요. SNS, 블로그, 광고 등 다양한 마케팅 전문가를 만나보세요.',
+  },
 }
 
 export default async function LocaleLayout({

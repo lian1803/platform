@@ -1,6 +1,17 @@
+import type { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+
+export const metadata: Metadata = {
+  title: '제안 상세',
+  description: '마케터의 제안 상세 내용과 포트폴리오를 확인하세요.',
+  openGraph: {
+    title: '제안 상세 | Platform',
+    description: '마케터의 제안 상세 내용과 포트폴리오를 확인하세요.',
+    type: 'website',
+  },
+}
 import { Link } from '@/lib/navigation'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
