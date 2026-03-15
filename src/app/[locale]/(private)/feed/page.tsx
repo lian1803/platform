@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Link } from '@/lib/navigation'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
@@ -14,6 +14,7 @@ export default async function FeedPage({
   params: { locale: string }
   searchParams: { type?: string }
 }) {
+  setRequestLocale(locale)
   const t = await getTranslations('request')
   const supabase = createClient()
 

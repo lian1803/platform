@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import { Link } from '@/lib/navigation'
 import { Badge } from '@/components/ui/badge'
@@ -13,10 +13,11 @@ const specialtyLabel: Record<Specialty, string> = {
 }
 
 export default async function MarketerProfilePage({
-  params: { id },
+  params: { id, locale },
 }: {
   params: { id: string; locale: string }
 }) {
+  setRequestLocale(locale)
   const t = await getTranslations('marketer')
   const supabase = createClient()
 

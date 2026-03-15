@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Link } from '@/lib/navigation'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -18,6 +18,7 @@ export default async function ProposalDetailPage({
 }: {
   params: { id: string; locale: string }
 }) {
+  setRequestLocale(locale)
   const t = await getTranslations('proposal')
   const supabase = createClient()
 

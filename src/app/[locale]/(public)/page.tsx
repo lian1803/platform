@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import { Link } from '@/lib/navigation'
 import { Button } from '@/components/ui/button'
@@ -44,6 +44,7 @@ export default async function LandingPage({
 }: {
   params: { locale: string }
 }) {
+  setRequestLocale(locale)
   const t = await getTranslations('landing')
   const tc = await getTranslations('common')
 
