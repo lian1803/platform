@@ -52,7 +52,21 @@
     "emailDuplicate": "This email is already registered",
     "passwordFormat": "Password must be at least 8 characters with letters and numbers",
     "nameTooShort": "Name must be at least 2 characters",
-    "networkError": "Connection unstable. Please try again."
+    "networkError": "Connection unstable. Please try again.",
+    "invalidCredentials": "Invalid email or password",
+    "emailNotConfirmed": "Email not confirmed. Please check your inbox.",
+    "emailExists": "This email is already registered",
+    "weakPassword": "Password is too weak. Please use a stronger password.",
+    "verifyEmailTitle": "Email Verification Required",
+    "verifyEmailDesc": "Please check your email for a verification link. We've sent a confirmation link to the email you registered with.",
+    "backToLogin": "Back to Login",
+    "forgotPassword": "Forgot your password?",
+    "resetPassword": "Reset Password",
+    "sendResetLink": "Send Reset Link",
+    "resetSuccess": "Your password has been successfully changed",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "resetEmailSent": "A password reset link has been sent to your email"
   },
   "landing": {
     "heroTitle": "Verified Marketers Pitch to You",

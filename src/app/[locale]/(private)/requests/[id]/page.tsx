@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
@@ -30,7 +30,7 @@ export default async function RequestDetailPage({
   const supabase = createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return null
+  if (!user) redirect(`/${locale}/login`)
 
   const { data: userData } = await supabase.from('users').select('role').eq('id', user.id).single()
   const role = userData?.role as UserRole

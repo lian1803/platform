@@ -22,7 +22,7 @@ export default function LoginPage({ params: { locale } }: { params: { locale: st
     setError(null)
     const result = await signIn({ ...form, locale })
     if (result?.error) {
-      setError(tc(result.error as Parameters<typeof tc>[0]))
+      setError(t(result.error as Parameters<typeof t>[0]))
       setLoading(false)
     }
   }
@@ -77,6 +77,12 @@ export default function LoginPage({ params: { locale } }: { params: { locale: st
             <Button type="submit" className="w-full mt-2" size="lg" disabled={loading}>
               {loading ? tc('loading') : t('loginBtn')}
             </Button>
+
+            <div className="text-center">
+              <Link href="/forgot-password" className="text-sm text-text-secondary hover:text-primary hover:underline">
+                {t('forgotPassword')}
+              </Link>
+            </div>
           </form>
         </div>
 

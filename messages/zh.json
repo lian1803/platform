@@ -52,7 +52,21 @@
     "emailDuplicate": "该邮箱已被注册",
     "passwordFormat": "密码须包含字母和数字，且不少于8位",
     "nameTooShort": "姓名至少需要2个字符",
-    "networkError": "网络不稳定，请重试"
+    "networkError": "网络不稳定，请重试",
+    "invalidCredentials": "邮箱或密码不正确",
+    "emailNotConfirmed": "邮箱尚未验证，请检查您的收件箱",
+    "emailExists": "该邮箱已被注册",
+    "weakPassword": "密码强度不够，请使用更强的密码",
+    "verifyEmailTitle": "需要邮箱验证",
+    "verifyEmailDesc": "请查看您的邮箱以获取验证链接。我们已将确认链接发送到您注册的邮箱。",
+    "backToLogin": "返回登录",
+    "forgotPassword": "忘记密码？",
+    "resetPassword": "重置密码",
+    "sendResetLink": "发送重置链接",
+    "resetSuccess": "密码已成功更改",
+    "newPassword": "新密码",
+    "confirmPassword": "确认密码",
+    "resetEmailSent": "密码重置链接已发送到您的邮箱"
   },
   "landing": {
     "heroTitle": "经过验证的营销师主动为您提案",

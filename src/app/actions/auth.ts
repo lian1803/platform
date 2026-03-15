@@ -27,11 +27,26 @@ export async function signUp(data: {
   })
 
   if (authError) {
-    if (authError.message.toLowerCase().includes('already registered')) return { error: 'emailDuplicate' }
+    const code = authError.message?.toLowerCase() ?? ''
+    if (
+      authError.status === 422 ||
+      code.includes('already registered') ||
+      code.includes('user_already_exists')
+    ) {
+      return { error: 'emailExists' }
+    }
+    if (code.includes('weak_password') || code.includes('weak password')) {
+      return { error: 'weakPassword' }
+    }
     return { error: 'networkError' }
   }
 
   if (!authData.user) return { error: 'networkError' }
+
+  // If email is not confirmed (identities empty or email_confirmed_at null), redirect to verify-email
+  const needsVerification =
+    !authData.user.email_confirmed_at ||
+    (authData.user.identities && authData.user.identities.length === 0)
 
   // users 테이블에 role, name, region 삽입
   const { error: insertError } = await supabase.from('users').insert({
@@ -59,6 +74,10 @@ export async function signUp(data: {
     event_data: { role: data.role, region: data.region },
   })
 
+  if (needsVerification) {
+    redirect(`/${data.locale}/verify-email`)
+  }
+
   const destination = data.role === 'client' ? 'dashboard' : 'feed'
   redirect(`/${data.locale}/${destination}`)
 }
@@ -75,7 +94,24 @@ export async function signIn(data: {
     password: data.password,
   })
 
-  if (error || !authData.user) return { error: 'networkError' }
+  if (error) {
+    const code = error.message?.toLowerCase() ?? ''
+    if (
+      code.includes('invalid_credentials') ||
+      code.includes('invalid login credentials')
+    ) {
+      return { error: 'invalidCredentials' }
+    }
+    if (
+      code.includes('email_not_confirmed') ||
+      code.includes('email not confirmed')
+    ) {
+      return { error: 'emailNotConfirmed' }
+    }
+    return { error: 'networkError' }
+  }
+
+  if (!authData.user) return { error: 'networkError' }
 
   const { data: userData } = await supabase
     .from('users')
@@ -91,4 +127,40 @@ export async function signOut(locale: string) {
   const supabase = createClient()
   await supabase.auth.signOut()
   redirect(`/${locale}`)
+}
+
+export async function forgotPassword(data: {
+  email: string
+  locale: string
+}): Promise<{ error?: string; success?: boolean }> {
+  const supabase = createClient()
+
+  const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/${data.locale}/reset-password`,
+  })
+
+  if (error) {
+    return { error: 'networkError' }
+  }
+
+  return { success: true }
+}
+
+export async function resetPassword(data: {
+  password: string
+  locale: string
+}): Promise<{ error?: string; success?: boolean }> {
+  if (!isValidPassword(data.password)) return { error: 'passwordFormat' }
+
+  const supabase = createClient()
+
+  const { error } = await supabase.auth.updateUser({
+    password: data.password,
+  })
+
+  if (error) {
+    return { error: 'networkError' }
+  }
+
+  return { success: true }
 }

@@ -52,7 +52,21 @@
     "emailDuplicate": "이미 가입된 이메일입니다",
     "passwordFormat": "영문과 숫자를 포함하여 8자 이상 입력해주세요",
     "nameTooShort": "이름은 2자 이상 입력해주세요",
-    "networkError": "연결이 불안정합니다. 다시 시도해주세요"
+    "networkError": "연결이 불안정합니다. 다시 시도해주세요",
+    "invalidCredentials": "이메일 또는 비밀번호가 올바르지 않습니다",
+    "emailNotConfirmed": "이메일 인증이 완료되지 않았습니다. 메일함을 확인해주세요",
+    "emailExists": "이미 가입된 이메일입니다",
+    "weakPassword": "비밀번호가 너무 약합니다. 더 강력한 비밀번호를 사용해주세요",
+    "verifyEmailTitle": "이메일 인증 필요",
+    "verifyEmailDesc": "이메일 인증 링크를 확인해주세요. 가입하신 이메일로 인증 링크를 보내드렸습니다.",
+    "backToLogin": "로그인으로 돌아가기",
+    "forgotPassword": "비밀번호를 잊으셨나요?",
+    "resetPassword": "비밀번호 재설정",
+    "sendResetLink": "재설정 링크 보내기",
+    "resetSuccess": "비밀번호가 성공적으로 변경되었습니다",
+    "newPassword": "새 비밀번호",
+    "confirmPassword": "비밀번호 확인",
+    "resetEmailSent": "비밀번호 재설정 링크를 이메일로 보내드렸습니다"
   },
   "landing": {
     "heroTitle": "검증된 마케터가 먼저 제안합니다",

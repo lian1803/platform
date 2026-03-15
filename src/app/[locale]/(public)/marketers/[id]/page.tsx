@@ -50,7 +50,7 @@ export default async function MarketerProfilePage({
 
   const { data: mp } = await supabase
     .from('marketer_profiles')
-    .select('*, users(name, avatar_url, phone)')
+    .select('*, users(name, avatar_url)')
     .eq('id', id)
     .single()
 

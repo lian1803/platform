@@ -31,7 +31,8 @@ export default async function FeedPage({
     .order('created_at', { ascending: false })
 
   if (searchParams.type) {
-    query = query.ilike('marketing_type', `%${searchParams.type}%`)
+    const escapeLike = (s: string) => s.replace(/%/g, '\\%').replace(/_/g, '\\_')
+    query = query.ilike('marketing_type', `%${escapeLike(searchParams.type)}%`)
   }
 
   const { data: requests } = await query

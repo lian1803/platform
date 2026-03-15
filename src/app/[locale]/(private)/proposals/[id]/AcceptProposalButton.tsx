@@ -27,6 +27,30 @@ export default function AcceptProposalButton({ proposalId, requestId, locale }: 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
+    // Verify current user owns the request linked to this proposal
+    const { data: proposal } = await supabase
+      .from('proposals')
+      .select('request_id')
+      .eq('id', proposalId)
+      .single()
+
+    if (!proposal) {
+      setLoading(false)
+      return
+    }
+
+    const { data: request } = await supabase
+      .from('requests')
+      .select('client_id')
+      .eq('id', proposal.request_id)
+      .single()
+
+    if (!request || request.client_id !== user.id) {
+      alert('권한이 없습니다. 본인의 의뢰에 대한 제안만 수락할 수 있습니다.')
+      setLoading(false)
+      return
+    }
+
     const { error } = await supabase
       .from('proposals')
       .update({ status: 'accepted' })
