@@ -15,11 +15,11 @@ import { createClient } from '@/lib/supabase/server'
 import { Link } from '@/lib/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Star } from 'lucide-react'
+import { Star, Search } from 'lucide-react'
 import type { MarketerProfileWithUser, Specialty } from '@/lib/types/database'
 
 const specialtyLabel: Record<Specialty, string> = {
-  sns: 'SNS', blog: 'Blog·SEO', place: 'Local', ads: 'Ads',
+  sns: 'SNS', blog: 'Blog/SEO', place: 'Local', ads: 'Ads',
 }
 
 export default async function MarketersPage({
@@ -48,25 +48,29 @@ export default async function MarketersPage({
   const SPECIALTY_FILTERS: { value: string; label: string }[] = [
     { value: '', label: '전체' },
     { value: 'sns', label: 'SNS' },
-    { value: 'blog', label: 'Blog·SEO' },
+    { value: 'blog', label: 'Blog/SEO' },
     { value: 'place', label: 'Local' },
     { value: 'ads', label: 'Ads' },
   ]
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-text-primary mb-6">마케터 둘러보기</h1>
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 md:py-12">
+      {/* Page header */}
+      <div className="mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-text-primary tracking-tight">마케터 둘러보기</h1>
+        <p className="text-text-secondary mt-2 text-sm">검증된 전문 마케터를 찾아보세요</p>
+      </div>
 
       {/* Filters */}
-      <div className="flex gap-2 flex-wrap mb-6">
+      <div className="flex gap-2 flex-wrap mb-8">
         {SPECIALTY_FILTERS.map(({ value, label }) => (
           <Link
             key={value}
             href={value ? `/marketers?specialty=${value}` : '/marketers'}
-            className={`px-4 py-1.5 rounded-full text-sm border transition-all ${
+            className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-200 ${
               searchParams.specialty === value || (!searchParams.specialty && !value)
-                ? 'border-primary bg-primary text-white'
-                : 'border-border bg-surface text-text-secondary hover:border-primary/50'
+                ? 'border-primary bg-primary text-white shadow-sm'
+                : 'border-border/60 bg-surface text-text-secondary hover:border-primary/40 hover:text-primary'
             }`}
           >
             {label}
@@ -76,26 +80,29 @@ export default async function MarketersPage({
 
       {/* Empty */}
       {list.length === 0 && (
-        <div className="text-center py-20 text-text-secondary">
-          <p className="text-lg">등록된 마케터가 없습니다</p>
-          <p className="text-sm mt-1">다른 필터를 선택해보세요</p>
+        <div className="text-center py-24 text-text-secondary">
+          <div className="w-16 h-16 rounded-2xl bg-background flex items-center justify-center mx-auto mb-4">
+            <Search size={28} className="text-text-secondary" />
+          </div>
+          <p className="text-lg font-medium text-text-primary">등록된 마케터가 없습니다</p>
+          <p className="text-sm mt-1.5">다른 필터를 선택해보세요</p>
         </div>
       )}
 
       {/* Grid */}
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
         {list.map((m) => (
           <Link key={m.id} href={`/marketers/${m.id}`}>
-            <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-              <CardContent className="p-4 flex flex-col gap-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
+            <Card className="hover:shadow-card-hover hover:-translate-y-1 cursor-pointer h-full">
+              <CardContent className="p-5 flex flex-col gap-3.5">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-primary font-bold text-lg">
                   {m.users?.name?.[0] ?? 'M'}
                 </div>
                 <div>
-                  <p className="font-semibold text-text-primary">{m.users?.name}</p>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <Star size={12} className="fill-warning text-warning" />
-                    <span className="text-xs text-text-secondary">
+                  <p className="font-semibold text-text-primary tracking-tight">{m.users?.name}</p>
+                  <div className="flex items-center gap-1 mt-1">
+                    <Star size={13} className="fill-warning text-warning" />
+                    <span className="text-xs text-text-secondary font-medium">
                       {Number(m.rating_avg).toFixed(1)} ({m.review_count}{t('reviews')})
                     </span>
                   </div>
@@ -103,13 +110,13 @@ export default async function MarketersPage({
                 {m.experience_years && (
                   <p className="text-xs text-text-secondary">경력 {m.experience_years}년</p>
                 )}
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-1.5">
                   {m.specialties.map((s) => (
                     <Badge key={s} variant="default" className="text-xs">{specialtyLabel[s]}</Badge>
                   ))}
                 </div>
                 {m.price_range_min && (
-                  <p className="text-xs text-text-secondary font-medium">
+                  <p className="text-xs text-text-secondary font-medium mt-auto pt-2 border-t border-border/40">
                     {m.price_range_min}만원~{m.price_range_max ? `${m.price_range_max}만원` : ''}
                   </p>
                 )}

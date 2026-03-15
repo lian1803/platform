@@ -28,53 +28,61 @@ export default function LoginPage({ params: { locale } }: { params: { locale: st
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4 py-12">
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <Link href="/" className="text-2xl font-bold text-primary">Platform</Link>
-          <p className="text-text-secondary text-sm mt-2">{t('loginBtn')}</p>
-        </div>
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gradient-to-b from-primary-50/40 to-background px-4 py-12">
+      <div className="w-full max-w-sm animate-scale-in opacity-0">
+        {/* Card wrapper */}
+        <div className="bg-surface rounded-2xl border border-border/40 shadow-elevated p-8">
+          <div className="text-center mb-8">
+            <Link href="/" className="inline-flex items-center gap-2 text-2xl font-bold text-primary">
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                <span className="text-white text-sm font-bold">P</span>
+              </div>
+              Platform
+            </Link>
+            <p className="text-text-secondary text-sm mt-3">{t('loginBtn')}</p>
+          </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-600">
-              {error}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-3.5 text-sm text-red-600">
+                {error}
+              </div>
+            )}
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="email" className="text-sm font-medium text-text-primary">{t('email')}</Label>
+              <Input
+                id="email"
+                type="email"
+                value={form.email}
+                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                placeholder="hello@example.com"
+                required
+                autoFocus
+              />
             </div>
-          )}
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="email">{t('email')}</Label>
-            <Input
-              id="email"
-              type="email"
-              value={form.email}
-              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-              placeholder="hello@example.com"
-              required
-              autoFocus
-            />
-          </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="password" className="text-sm font-medium text-text-primary">{t('password')}</Label>
+              <Input
+                id="password"
+                type="password"
+                value={form.password}
+                onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+                placeholder="••••••••"
+                required
+              />
+            </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="password">{t('password')}</Label>
-            <Input
-              id="password"
-              type="password"
-              value={form.password}
-              onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-              placeholder="••••••••"
-              required
-            />
-          </div>
-
-          <Button type="submit" className="w-full mt-2" size="lg" disabled={loading}>
-            {loading ? tc('loading') : t('loginBtn')}
-          </Button>
-        </form>
+            <Button type="submit" className="w-full mt-2" size="lg" disabled={loading}>
+              {loading ? tc('loading') : t('loginBtn')}
+            </Button>
+          </form>
+        </div>
 
         <p className="text-center text-sm text-text-secondary mt-6">
           {t('noAccount')}{' '}
-          <Link href="/signup" className="text-primary hover:underline font-medium">
+          <Link href="/signup" className="text-primary hover:underline font-semibold">
             {t('signupBtn')}
           </Link>
         </p>

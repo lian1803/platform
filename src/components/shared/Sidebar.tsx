@@ -31,8 +31,11 @@ export default function Sidebar({ role }: SidebarProps) {
   const items = role === 'client' ? clientItems : marketerItems
 
   return (
-    <aside className="hidden md:flex flex-col w-56 min-h-screen border-r border-border bg-surface px-3 py-6 gap-1">
-      <Link href="/" className="text-xl font-bold text-primary px-3 mb-6">
+    <aside className="hidden md:flex flex-col w-60 min-h-screen border-r border-border/40 bg-surface px-4 py-6 gap-1">
+      <Link href="/" className="flex items-center gap-2 text-xl font-bold text-primary px-3 mb-8">
+        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+          <span className="text-white text-sm font-bold">P</span>
+        </div>
         Platform
       </Link>
       {items.map(({ href, label, icon: Icon }) => {
@@ -42,9 +45,9 @@ export default function Sidebar({ role }: SidebarProps) {
             key={href}
             href={href}
             className={cn(
-              'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors',
+              'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200',
               active
-                ? 'bg-primary/10 text-primary font-medium'
+                ? 'bg-primary-50 text-primary'
                 : 'text-text-secondary hover:bg-background hover:text-text-primary'
             )}
           >

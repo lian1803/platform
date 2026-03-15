@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import { Link } from '@/lib/navigation'
 import { Button } from '@/components/ui/button'
+import MobileMenu from '@/components/shared/MobileMenu'
 
 export default async function Header({ locale }: { locale: string }) {
   const t = await getTranslations('nav')
@@ -19,32 +20,35 @@ export default async function Header({ locale }: { locale: string }) {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-surface border-b border-border">
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-50 glass border-b border-border/40 shadow-header">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="text-xl font-bold text-primary">
-          Platform
+        <Link href="/" className="text-xl font-bold text-primary tracking-tight flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+            <span className="text-white text-sm font-bold">P</span>
+          </div>
+          <span className="hidden sm:inline">Platform</span>
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-6">
-          <Link href="/marketers" className="text-text-secondary hover:text-text-primary transition-colors text-sm">
+        <nav className="hidden md:flex items-center gap-1">
+          <Link href="/marketers" className="px-4 py-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-background/80 transition-all duration-200 text-sm font-medium">
             {t('marketers')}
           </Link>
           {user && userRole === 'client' && (
-            <Link href="/dashboard" className="text-text-secondary hover:text-text-primary transition-colors text-sm">
+            <Link href="/dashboard" className="px-4 py-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-background/80 transition-all duration-200 text-sm font-medium">
               {t('dashboard')}
             </Link>
           )}
           {user && userRole === 'marketer' && (
-            <Link href="/feed" className="text-text-secondary hover:text-text-primary transition-colors text-sm">
+            <Link href="/feed" className="px-4 py-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-background/80 transition-all duration-200 text-sm font-medium">
               {t('feed')}
             </Link>
           )}
         </nav>
 
-        {/* Auth Buttons */}
-        <div className="flex items-center gap-2">
+        {/* Auth Buttons - Desktop */}
+        <div className="hidden md:flex items-center gap-2">
           {user ? (
             <form action={`/${locale}/auth/logout`} method="POST">
               <Button variant="ghost" size="sm" type="submit">{t('logout')}</Button>
@@ -60,6 +64,13 @@ export default async function Header({ locale }: { locale: string }) {
             </>
           )}
         </div>
+
+        {/* Mobile Menu */}
+        <MobileMenu
+          locale={locale}
+          isLoggedIn={!!user}
+          userRole={userRole}
+        />
       </div>
     </header>
   )

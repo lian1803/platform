@@ -5,7 +5,7 @@ import { Link } from '@/lib/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Star, ArrowRight, CheckCircle } from 'lucide-react'
+import { Star, ArrowRight, CheckCircle, Sparkles, Shield, Zap } from 'lucide-react'
 import type { MarketerProfileWithUser } from '@/lib/types/database'
 
 async function getStats() {
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
 
 const specialtyLabel: Record<string, string> = {
   sns: 'SNS',
-  blog: 'Blog·SEO',
+  blog: 'Blog/SEO',
   place: 'Local',
   ads: 'Ads',
 }
@@ -65,22 +65,35 @@ export default async function LandingPage({
   return (
     <div className="flex flex-col">
       {/* ─── Hero ─── */}
-      <section className="bg-gradient-to-b from-primary/5 to-background px-4 py-20 md:py-32 text-center">
-        <div className="max-w-3xl mx-auto flex flex-col items-center gap-6">
-          <h1 className="text-[clamp(2rem,5vw,2.5rem)] font-bold text-text-primary leading-tight">
+      <section className="relative overflow-hidden px-4 sm:px-6 pt-16 pb-20 md:pt-28 md:pb-36">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-blue-50/40" />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/[0.04] rounded-full blur-3xl translate-y-1/2 -translate-x-1/3" />
+
+        <div className="relative max-w-3xl mx-auto flex flex-col items-center gap-6 text-center">
+          {/* Trust badge */}
+          <div className="animate-fade-in-up opacity-0 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 border border-primary-100 text-primary text-sm font-medium">
+            <Sparkles size={14} />
+            <span>{locale === 'ko' ? '검증된 마케터와 함께' : 'With Verified Marketers'}</span>
+          </div>
+
+          <h1 className="animate-fade-in-up opacity-0 delay-100 text-[clamp(2rem,6vw,3.25rem)] font-bold text-text-primary leading-[1.15] tracking-tight">
             {t('heroTitle')}
           </h1>
-          <p className="text-text-secondary text-lg leading-relaxed max-w-xl">
+
+          <p className="animate-fade-in-up opacity-0 delay-200 text-text-secondary text-lg md:text-xl leading-relaxed max-w-xl">
             {t('heroSubtitle')}
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 mt-2">
+
+          <div className="animate-fade-in-up opacity-0 delay-300 flex flex-col sm:flex-row gap-3 mt-4">
             <Link href="/signup?role=client">
-              <Button size="lg" className="w-full sm:w-auto gap-2">
-                {t('ctaClient')} <ArrowRight size={16} />
+              <Button size="xl" className="w-full sm:w-auto gap-2 text-[15px]">
+                {t('ctaClient')} <ArrowRight size={18} />
               </Button>
             </Link>
             <Link href="/signup?role=marketer">
-              <Button variant="outline" size="lg" className="w-full sm:w-auto">
+              <Button variant="outline" size="xl" className="w-full sm:w-auto text-[15px]">
                 {t('ctaMarketer')}
               </Button>
             </Link>
@@ -89,41 +102,50 @@ export default async function LandingPage({
       </section>
 
       {/* ─── Stats ─── */}
-      <section className="border-y border-border bg-surface py-10 px-4">
-        <div className="max-w-4xl mx-auto grid grid-cols-3 divide-x divide-border text-center">
-          <div className="px-4 py-2">
-            <p className="text-3xl font-bold text-primary">{stats.marketerCount}+</p>
-            <p className="text-sm text-text-secondary mt-1">{t('statsMarketers')}</p>
-          </div>
-          <div className="px-4 py-2">
-            <p className="text-3xl font-bold text-primary">{stats.matchCount}+</p>
-            <p className="text-sm text-text-secondary mt-1">{t('statsMatches')}</p>
-          </div>
-          <div className="px-4 py-2">
-            <p className="text-3xl font-bold text-primary">⭐ {stats.avgRating}</p>
-            <p className="text-sm text-text-secondary mt-1">{t('statsRating')}</p>
+      <section className="relative -mt-8 px-4 sm:px-6 z-10">
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-surface rounded-2xl shadow-elevated border border-border/40 grid grid-cols-3 divide-x divide-border/50">
+            <div className="px-4 sm:px-8 py-6 sm:py-8 text-center animate-count-up opacity-0">
+              <p className="text-2xl sm:text-4xl font-bold text-primary tracking-tight">{stats.marketerCount}+</p>
+              <p className="text-xs sm:text-sm text-text-secondary mt-1.5 font-medium">{t('statsMarketers')}</p>
+            </div>
+            <div className="px-4 sm:px-8 py-6 sm:py-8 text-center animate-count-up opacity-0 delay-100">
+              <p className="text-2xl sm:text-4xl font-bold text-primary tracking-tight">{stats.matchCount}+</p>
+              <p className="text-xs sm:text-sm text-text-secondary mt-1.5 font-medium">{t('statsMatches')}</p>
+            </div>
+            <div className="px-4 sm:px-8 py-6 sm:py-8 text-center animate-count-up opacity-0 delay-200">
+              <div className="flex items-center justify-center gap-1.5">
+                <Star size={20} className="fill-warning text-warning" />
+                <p className="text-2xl sm:text-4xl font-bold text-primary tracking-tight">{stats.avgRating}</p>
+              </div>
+              <p className="text-xs sm:text-sm text-text-secondary mt-1.5 font-medium">{t('statsRating')}</p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ─── How It Works ─── */}
-      <section className="py-16 px-4 bg-background">
+      <section className="py-20 md:py-28 px-4 sm:px-6 bg-background">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold text-center text-text-primary mb-12">
-            {t('howTitle')}
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="text-center mb-14">
+            <p className="text-primary font-semibold text-sm mb-3 tracking-wide uppercase">How it works</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-text-primary tracking-tight">
+              {t('howTitle')}
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6 md:gap-10">
             {[
-              { step: '01', title: t('how1Title'), desc: t('how1Desc') },
-              { step: '02', title: t('how2Title'), desc: t('how2Desc') },
-              { step: '03', title: t('how3Title'), desc: t('how3Desc') },
-            ].map(({ step, title, desc }) => (
-              <div key={step} className="flex flex-col items-center text-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
-                  {step}
+              { step: '01', title: t('how1Title'), desc: t('how1Desc'), icon: Sparkles, delay: '' },
+              { step: '02', title: t('how2Title'), desc: t('how2Desc'), icon: Shield, delay: 'delay-100' },
+              { step: '03', title: t('how3Title'), desc: t('how3Desc'), icon: Zap, delay: 'delay-200' },
+            ].map(({ step, title, desc, icon: Icon, delay }) => (
+              <div key={step} className={`animate-fade-in-up opacity-0 ${delay} flex flex-col items-center text-center gap-5 p-6 rounded-2xl hover:bg-surface hover:shadow-card transition-all duration-300`}>
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center">
+                  <Icon size={28} className="text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-text-primary mb-1">{title}</h3>
+                  <p className="text-xs text-primary font-bold mb-2 tracking-widest">{step}</p>
+                  <h3 className="font-bold text-text-primary text-lg mb-2 tracking-tight">{title}</h3>
                   <p className="text-sm text-text-secondary leading-relaxed">{desc}</p>
                 </div>
               </div>
@@ -134,28 +156,38 @@ export default async function LandingPage({
 
       {/* ─── Featured Marketers ─── */}
       {featuredMarketers.length > 0 && (
-        <section className="py-16 px-4 bg-surface border-t border-border">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold text-text-primary mb-8">{t('featuredMarketers')}</h2>
-            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
-              {featuredMarketers.map((m) => (
+        <section className="py-20 md:py-28 px-4 sm:px-6 bg-gradient-to-b from-background to-primary-50/30">
+          <div className="max-w-5xl mx-auto">
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <p className="text-primary font-semibold text-sm mb-2 tracking-wide">Top Marketers</p>
+                <h2 className="text-2xl md:text-3xl font-bold text-text-primary tracking-tight">{t('featuredMarketers')}</h2>
+              </div>
+              <Link href="/marketers" className="hidden sm:block">
+                <Button variant="outline" size="sm" className="gap-2">
+                  {tc('search')} <ArrowRight size={14} />
+                </Button>
+              </Link>
+            </div>
+            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
+              {featuredMarketers.map((m, idx) => (
                 <Link key={m.id} href={`/marketers/${m.id}`}>
-                  <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-                    <CardContent className="p-4 flex flex-col gap-3">
+                  <Card className={`hover:shadow-card-hover hover:-translate-y-1 cursor-pointer h-full animate-fade-in-up opacity-0 ${idx === 0 ? '' : idx === 1 ? 'delay-100' : idx === 2 ? 'delay-200' : 'delay-300'}`}>
+                    <CardContent className="p-5 flex flex-col gap-3.5">
                       {/* Avatar */}
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
+                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-primary font-bold text-lg">
                         {m.users?.name?.[0] ?? 'M'}
                       </div>
                       <div>
-                        <p className="font-medium text-text-primary">{m.users?.name}</p>
-                        <div className="flex items-center gap-1 mt-0.5">
-                          <Star size={12} className="fill-warning text-warning" />
-                          <span className="text-xs text-text-secondary">
+                        <p className="font-semibold text-text-primary tracking-tight">{m.users?.name}</p>
+                        <div className="flex items-center gap-1 mt-1">
+                          <Star size={13} className="fill-warning text-warning" />
+                          <span className="text-xs text-text-secondary font-medium">
                             {Number(m.rating_avg).toFixed(1)} ({m.review_count})
                           </span>
                         </div>
                       </div>
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex flex-wrap gap-1.5">
                         {m.specialties.slice(0, 2).map((s) => (
                           <Badge key={s} variant="default" className="text-xs">
                             {specialtyLabel[s] ?? s}
@@ -163,7 +195,7 @@ export default async function LandingPage({
                         ))}
                       </div>
                       {m.price_range_min && (
-                        <p className="text-xs text-text-secondary">
+                        <p className="text-xs text-text-secondary font-medium">
                           {locale === 'en' ? `From $${m.price_range_min}` : `${m.price_range_min}만원~`}
                         </p>
                       )}
@@ -172,9 +204,9 @@ export default async function LandingPage({
                 </Link>
               ))}
             </div>
-            <div className="mt-8 text-center">
+            <div className="mt-8 text-center sm:hidden">
               <Link href="/marketers">
-                <Button variant="outline">{tc('search')} <ArrowRight size={16} className="ml-2" /></Button>
+                <Button variant="outline" className="gap-2">{tc('search')} <ArrowRight size={16} /></Button>
               </Link>
             </div>
           </div>
@@ -182,25 +214,42 @@ export default async function LandingPage({
       )}
 
       {/* ─── CTA Repeat ─── */}
-      <section className="py-20 px-4 bg-primary text-white text-center">
-        <div className="max-w-2xl mx-auto flex flex-col items-center gap-6">
-          <CheckCircle size={40} />
-          <h2 className="text-2xl md:text-3xl font-bold">{t('heroTitle')}</h2>
-          <p className="text-primary-foreground/80">{t('heroSubtitle')}</p>
-          <div className="flex flex-col sm:flex-row gap-3">
+      <section className="relative overflow-hidden py-24 md:py-32 px-4 sm:px-6 text-center">
+        {/* Rich gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-700 to-primary-800" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent" />
+
+        <div className="relative max-w-2xl mx-auto flex flex-col items-center gap-6">
+          <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center mb-2">
+            <CheckCircle size={32} className="text-white" />
+          </div>
+          <h2 className="text-2xl md:text-4xl font-bold text-white tracking-tight leading-tight">{t('heroTitle')}</h2>
+          <p className="text-white/70 text-lg max-w-lg">{t('heroSubtitle')}</p>
+          <div className="flex flex-col sm:flex-row gap-3 mt-4">
             <Link href="/signup?role=client">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary w-full sm:w-auto">
+              <Button size="xl" className="bg-white text-primary hover:bg-white/90 shadow-lg w-full sm:w-auto text-[15px]">
                 {t('ctaClient')}
               </Button>
             </Link>
             <Link href="/signup?role=marketer">
-              <Button size="lg" className="bg-white text-primary hover:bg-primary-foreground w-full sm:w-auto">
+              <Button size="xl" variant="outline" className="border-white/30 text-white hover:bg-white/10 w-full sm:w-auto text-[15px]">
                 {t('ctaMarketer')}
               </Button>
             </Link>
           </div>
         </div>
       </section>
+
+      {/* ─── Footer ─── */}
+      <footer className="py-8 px-4 sm:px-6 bg-surface border-t border-border/40">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-text-secondary">
+          <p className="font-medium">&copy; 2024 Platform. All rights reserved.</p>
+          <div className="flex items-center gap-6">
+            <Link href="/marketers" className="hover:text-text-primary transition-colors">{locale === 'ko' ? '마케터 찾기' : 'Find Marketers'}</Link>
+            <Link href="/login" className="hover:text-text-primary transition-colors">{locale === 'ko' ? '로그인' : 'Log in'}</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
