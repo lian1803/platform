@@ -12,34 +12,39 @@
 - 중간에 나한테 확인하거나 질문 금지
 - 작업 완료 후 결과만 보고
 
-## 오류 처리 규칙
-- 오류 발생 시 스스로 원인 파악 후 수정, 3회까지 재시도
-- 3회 실패 시 다른 접근법으로 전환 (나한테 묻지 말 것)
-- 복잡한 아키텍처 판단은 Opus 모델로 전환 후 해결, 이후 Sonnet 복귀
-- Vercel 배포 오류는 로컬 빌드(`npm run build`)로 먼저 재현 후 수정
+## 오류 해결 루프 (반드시 이 순서로)
+1. 오류 재현 → `npm run build` 로컬 빌드로 확인
+2. 수정 → push → Vercel 배포 대기
+3. 배포 완료 후 실제 URL 접속해서 동작 확인
+4. 오류 없으면 → 나한테 "완료" 보고
+5. 오류 있으면 → 루프 반복 (나한테 묻지 말 것)
+- 3회 이내 해결 안 되면 → Opus 모델로 전환해서 재시도
+- Opus로도 3회 실패 → 그때만 나한테 보고
 
-## 현재 오류 (우선 해결)
-- 증상: `Application error: a client-side exception has occurred`
-- 빌드는 성공, 런타임에서 터짐
-- 원인 추정: use client 컴포넌트 hydration 오류 또는 Supabase 환경변수 미설정
-- 해결 순서:
-  1. 브라우저 콘솔 에러 메시지 확인
-  2. Supabase 환경변수 Vercel에 등록됐는지 확인
-  3. `use client` / `use server` 혼용 문제 확인
-  4. 수정 후 자동 push → Vercel 재배포
+## 검증 기준 (완료 조건)
+- 로컬 `npm run build` 에러 없음
+- Vercel 배포 성공
+- 실제 URL에서 브라우저 콘솔 에러 없음
+- 주요 페이지 (/, /login, /signup, /dashboard) 정상 렌더링 확인
+- 위 4가지 모두 통과해야 완료
+
+## 병렬 에이전트 활용
+- 오류 원인이 여러 곳일 경우 서브에이전트 분리해서 병렬 수정
+- Auth 오류 → Auth Agent
+- DB/RLS 오류 → DB Agent  
+- UI hydration 오류 → UI Agent
+- 각 에이전트 수정 완료 후 통합 → 빌드 검증
 
 ## 금지 사항
+- 완료 조건 미달성 상태에서 나한테 보고 금지
 - Must(M1~M6) 외 기능 구현 금지
-- 설계서 외 테이블/컬럼 추가 금지
 - 환경변수 하드코딩 금지
-- 나한테 중간 확인 요청 금지
+- 중간 확인 요청 금지
 ```
 
 ---
 
-**지금 당장 오류 잡으려면** Claude Code에 이것만 던져:
+Claude Code에 던질 명령어:
 ```
-브라우저에서 Application error 나고있어. 
-빌드는 성공. 런타임 오류임.
-Vercel 환경변수 확인하고, hydration 오류 찾아서 고쳐서 push까지 해.
-중간에 나한테 묻지 마.
+Application error 나고있어. CLAUDE.md 읽고 오류 해결 루프 돌려.
+완료 조건 4가지 전부 통과할 때까지 나한테 묻지 말고 혼자 해결해.# Build verified Mon, Mar 16, 2026  5:43:15 AM
