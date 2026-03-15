@@ -51,7 +51,8 @@
     "noAccount": "Don't have an account?",
     "emailDuplicate": "This email is already registered",
     "passwordFormat": "Password must be at least 8 characters with letters and numbers",
-    "nameTooShort": "Name must be at least 2 characters"
+    "nameTooShort": "Name must be at least 2 characters",
+    "networkError": "Connection unstable. Please try again."
   },
   "landing": {
     "heroTitle": "Verified Marketers Pitch to You",

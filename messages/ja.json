@@ -51,7 +51,8 @@
     "noAccount": "アカウントをお持ちでないですか？",
     "emailDuplicate": "このメールアドレスはすでに登録されています",
     "passwordFormat": "英字と数字を含む8文字以上で入力してください",
-    "nameTooShort": "名前は2文字以上で入力してください"
+    "nameTooShort": "名前は2文字以上で入力してください",
+    "networkError": "接続が不安定です。もう一度お試しください"
   },
   "landing": {
     "heroTitle": "実力派マーケターが直接提案します",

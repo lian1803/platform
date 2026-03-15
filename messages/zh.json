@@ -51,7 +51,8 @@
     "noAccount": "没有账号？",
     "emailDuplicate": "该邮箱已被注册",
     "passwordFormat": "密码须包含字母和数字，且不少于8位",
-    "nameTooShort": "姓名至少需要2个字符"
+    "nameTooShort": "姓名至少需要2个字符",
+    "networkError": "网络不稳定，请重试"
   },
   "landing": {
     "heroTitle": "经过验证的营销师主动为您提案",
