@@ -55,12 +55,10 @@ export default async function LocaleLayout({
   const fontVariable = fontByLocale[locale as Locale]
 
   return (
-    <html lang={locale} className={fontVariable}>
-      <body className="bg-background text-text-primary font-sans antialiased">
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider messages={messages}>
+      <div lang={locale} className={`${fontVariable} bg-background text-text-primary font-sans antialiased min-h-screen`}>
+        {children}
+      </div>
+    </NextIntlClientProvider>
   )
 }
