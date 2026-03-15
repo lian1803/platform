@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans: var(--font-noto-kr), var(--font-inter), var(--font-noto-sc), var(--font-noto-jp), system-ui, sans-serif;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-text-primary;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+}
